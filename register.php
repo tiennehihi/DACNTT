@@ -34,12 +34,8 @@
         cursor: pointer;
       }
   </style>
-<div class="d-flex align-items-center justify-content-center ">
+<div class="d-flex align-items-center justify-content-center">
   <!-- /.login-logo -->
-  <!-- <div class="d-flex  justify-content-center align-items-center col-lg-5">
-      <center><img src="<?= validate_image($_settings->info('logo')) ?>" alt="System Logo" class="img-thumbnail rounded-circle" id="logo-img"></center>
-      <div class="clear-fix my-2"></div>
-  </div> -->
   <div class="d-flex  justify-content-center align-items-center col-lg-7 bg-gradient-light text-dark">
     <div class="card card-outline card-purple w-75">
       <div class="card-header text-center">
@@ -112,12 +108,11 @@
             <div class="form-group col-md-6">
               <label for="" class="control-label">Ảnh đại diện</label>
               <div class="custom-file">
-                      <input type="file" class="custom-file-input rounded-0 form-control form-control-sm form-control-border" id="customFile" name="img" onchange="displayImg(this,$(this))">
-                      <label class="custom-file-label" for="customFile">Choose file</label>
-                    </div>
-            </div>
-          <div class="row">
+                <input type="file" class="custom-file-input rounded-0 form-control form-control-sm form-control-border" id="customFile" name="img" onchange="displayImg(this,$(this))">
+                <label class="custom-file-label" for="customFile">Choose file</label>
+              </div>
           </div>
+          <div class="row">
             <div class="form-group col-md-6 d-flex justify-content-center">
               <img src="<?php echo validate_image(isset($image_path) ? $image_path : "") ?>" alt="" id="cimg" class="img-fluid img-thumbnail">
             </div>
@@ -230,7 +225,7 @@
           }else{
 						alert_toast("An error occured",'error');
 						end_loader();
-                        console.log(resp)
+            console.log(resp)
 					}
           $('html, body').scrollTop(0)
 				}

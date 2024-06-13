@@ -109,14 +109,14 @@ if($_settings->userdata('id') > 0 && $_settings->userdata('login_type') == 2){
                             <div class="form-group col-md-6">
                             <label for="" class="control-label">Ảnh đại diện</label>
                             <div class="custom-file">
-                                    <input type="file" class="custom-file-input rounded-0 form-control form-control-sm form-control-border" id="customFile" name="img" onchange="displayImg(this,$(this))">
-                                    <label class="custom-file-label" for="customFile">Choose file</label>
-                                    </div>
+                                <input type="file" class="custom-file-input rounded-0 form-control form-control-sm form-control-border" id="customFile" name="img" onchange="displayImg(this,$(this))">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
                             </div>
+                        </div>
                         <div class="row">
                         </div>
                             <div class="form-group col-md-6 d-flex justify-content-center">
-                            <img src="<?php echo validate_image(isset($image_path) ? $image_path : "") ?>" alt="" id="cimg" class="img-fluid img-thumbnail">
+                                <img src="<?php echo validate_image(isset($image_path) ? $image_path : "") ?>" alt="" id="cimg" class="img-fluid img-thumbnail">
                             </div>
                         </div>
                         <div class="row align-items-center">

@@ -47,7 +47,7 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
             <fieldset class="bor">
                 <legend class="h5 text-muted"> Chi tiết đặt</legend>
                 <dl>
-                    <dt class="">Mã đặt</dt>
+                    <dt class="">Mã</dt>
                     <dd class="pl-4"><?= isset($ref_code) ? $ref_code : "" ?></dd>
                     <dt class="">Khách hàng</dt>
                     <dd class="pl-4"><?= isset($client) ? $client : "" ?></dd>

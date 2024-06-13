@@ -94,7 +94,7 @@ Class Users extends DBConnection {
 						imagedestroy($gdImg);
 						imagedestroy($t_image);
 				}else{
-				$resp['msg'].=" But Image failed to upload due to unkown reason.";
+					$resp['msg'].=" But Image failed to upload due to unkown reason.";
 				}
 			}
 			if(isset($uploaded_img)){
@@ -104,6 +104,7 @@ Class Users extends DBConnection {
 				}
 			}
 		}
+		
 		if(isset($resp['msg']))
 		$this->settings->set_flashdata('success',$resp['msg']);
 		return  $resp['status'];
@@ -174,43 +175,82 @@ Class Users extends DBConnection {
 				}else{
 					$resp['msg'] = " Client's Account Details has been updated successfully.";
 				}
-				if(isset($_FILES['img']) && $_FILES['img']['tmp_name'] != ''){
-					if(!is_dir(base_app."uploads/clients/"))
-						mkdir(base_app."uploads/clients/");
-					$fname = 'uploads/clients/'.$uid.'.png';
-					$dir_path =base_app. $fname;
-					$upload = $_FILES['img']['tmp_name'];
-					$type = mime_content_type($upload);
-					$allowed = array('image/png','image/jpeg');
-					if(!in_array($type,$allowed)){
-						$resp['msg'].=" But Image failed to upload due to invalid file type.";
-					}else{
-						$new_height = 200; 
-						$new_width = 200; 
 				
-						list($width, $height) = getimagesize($upload);
-						$t_image = imagecreatetruecolor($new_width, $new_height);
-						imagealphablending( $t_image, false );
-						imagesavealpha( $t_image, true );
-						$gdImg = ($type == 'image/png')? imagecreatefrompng($upload) : imagecreatefromjpeg($upload);
-						imagecopyresampled($t_image, $gdImg, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
-						if($gdImg){
-								if(is_file($dir_path))
-								unlink($dir_path);
-								$uploaded_img = imagepng($t_image,$dir_path);
-								imagedestroy($gdImg);
-								imagedestroy($t_image);
-						}else{
-						$resp['msg'].=" But Image failed to upload due to unkown reason.";
+				if (isset($_FILES['img']) && $_FILES['img']['tmp_name'] != '') {
+					$uploadDir = base_app . "uploads/clients/";
+				
+					// Kiểm tra và tạo thư mục nếu chưa tồn tại
+					if (!is_dir($uploadDir)) {
+						if (!mkdir($uploadDir, 0777, true)) {
+							die('Failed to create folders...');
 						}
 					}
-					if(isset($uploaded_img)){
-						$this->conn->query("UPDATE client_list set `image_path` = CONCAT('{$fname}','?v=',unix_timestamp(CURRENT_TIMESTAMP)) where id = '{$uid}' ");
-						if($id == $this->settings->userdata('id') && $this->settings->userdata('login_type') == 2){
-								$this->settings->set_userdata('image_path',$fname);
+				
+					// Kiểm tra quyền ghi của thư mục
+					if (!is_writable($uploadDir)) {
+						die('Upload directory is not writable');
+					}
+				
+					$fname = 'uploads/clients/' . $uid . '.png';
+					$dir_path = base_app . $fname;
+					$upload = $_FILES['img']['tmp_name'];
+					$type = mime_content_type($upload);
+					$allowed = array('image/png', 'image/jpeg');
+				
+					if (!in_array($type, $allowed)) {
+						$resp['msg'] .= " But Image failed to upload due to invalid file type.";
+					} else {
+						// Resize image
+						$new_height = 200;
+						$new_width = 200;
+						list($width, $height) = getimagesize($upload);
+						$t_image = imagecreatetruecolor($new_width, $new_height);
+						$gdImg = ($type == 'image/png') ? imagecreatefrompng($upload) : imagecreatefromjpeg($upload);
+						imagecopyresampled($t_image, $gdImg, 0, 0, 0, 0, $new_width, $new_height, $width, $height);
+				
+						if ($gdImg) {
+							if (is_file($dir_path)) {
+								unlink($dir_path);
+							}
+							$uploaded_img = ($type == 'image/png') ? imagepng($t_image, $dir_path) : imagejpeg($t_image, $dir_path);
+							imagedestroy($gdImg);
+							imagedestroy($t_image);
+						} else {
+							$resp['msg'] .= " But Image failed to upload due to unknown reason.";
+						}
+					}
+				
+					if (isset($uploaded_img)) {
+						$this->conn->query("UPDATE client_list SET `image_path` = CONCAT('{$fname}', '?v=', UNIX_TIMESTAMP(CURRENT_TIMESTAMP)) WHERE id = '{$uid}'");
+						if ($id == $this->settings->userdata('id') && $this->settings->userdata('login_type') == 2) {
+							$this->settings->set_userdata('image_path', $fname);
 						}
 					}
 				}
+
+
+				// if(isset($_FILES['img']) && $_FILES['img']['tmp_name'] != ''){
+				// 	$fname = 'uploads/'.strtotime(date('y-m-d H:i')).'_'.$_FILES['img']['name'];
+				// 	$move = move_uploaded_file($_FILES['img']['tmp_name'],'../'.$fname);
+				// 	if($move){
+				// 		$sql = "INSERT INTO client_list (image_path) VALUES ('$fname')";
+				// 		$query = $this->conn->query($sql);
+				// 		if($query){
+				// 			// Ảnh đã được upload và lưu vào cơ sở dữ liệu thành công
+				// 			echo "Upload and save image successfully.";
+				// 		} else {
+				// 			// Có lỗi xảy ra khi lưu vào cơ sở dữ liệu
+				// 			echo "Error occurred while saving image to the database.";
+				// 		}
+				// 	} else {
+				// 		// Có lỗi xảy ra khi upload ảnh
+				// 		echo "Error occurred while uploading the image.";
+				// 	}
+				// } else {
+				// 	// Không có file ảnh được upload
+				// 	echo "No image file was uploaded.";
+				// }
+							
 			}else{
 				$resp['status'] = 'failed';
 				if(empty($id)){
@@ -221,7 +261,7 @@ Class Users extends DBConnection {
 					$resp['msg'] = " Client's Account Details has failed to update.";
 				}
 			}
-		}
+		}	
 		
 		if($resp['status'] == 'success')
 		$this->settings->set_flashdata('success',$resp['msg']);
